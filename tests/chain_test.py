@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from yamm import Chain
 
 
-class NoteTest(TestCase):
+class ChainTest(TestCase):
 
     def test(self):
         Chain()
