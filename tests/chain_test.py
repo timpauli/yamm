@@ -9,14 +9,12 @@ class ChainTest(TestCase):
         test = Chain.test_from_data([1, 2, 1, 1])
         check = {(1,): {1: 1, 2: 1},
                  (2,): {1: 1}}
-
         self.assertEqual(test, check)
 
     def test_from_data2(self):
         test = Chain.test_from_data([1, 2, 1, 1], 2)
         check = {(1, 2): {1: 1},
                  (2, 1): {1: 1}}
-
         self.assertEqual(test, check)
 
     def test_from_matrix(self):
@@ -27,6 +25,22 @@ class ChainTest(TestCase):
                  (2,): {1: 1}}
         test = chain.step(2)
         check = 1
+        self.assertEqual(test, check)
+
+    def test_walk(self):
+        chain = {(1,): {2: 1},
+                 (2,): {3: 1},
+                 (3,): {1: 1}}
+        test = chain.walk_until(1)
+        check = (1, 2, 3)
+        for t, c in zip(test, check):
+            self.assertEqual(t, c)
+
+    def test_walk_until(self):
+        chain = {(1,): {1: 1, 2: 1},
+                 (2,): {1: 1}}
+        test = len(chain.walk_until(1, 8))
+        check = 8
         self.assertEqual(test, check)
 
 
