@@ -12,6 +12,10 @@ class Chain(dict):
     ("markov",): {"hello": 2, "markov": 3}}
     """
 
+    @property
+    def order(self):
+        return len(tuple(self.keys()[0]))
+
     @classmethod
     def from_data(cls, data, order=1):
         raise NotImplementedError
@@ -23,15 +27,19 @@ class Chain(dict):
     def step(self, state):
         try:
             s = self[state]
-            return tuple(random.choices(tuple(s.keys()), tuple(s.values())))
+            return random.choices(tuple(s.keys()), tuple(s.values()))[0]
         except KeyError:
             return None
 
     def walk(self, start):
         def walk_generator(current_state):
-            while current_state:
-                yield current_state
-                current_state = self.step(current_state)
+            for element in current_state:
+                yield element
+            res = self.step(current_state)
+            while res is not None:
+                yield res
+                current_state = current_state[1:] + (res,)
+                res = self.step(current_state)
         return walk_generator(start)
 
     def walk_until(self, start, max_steps):
