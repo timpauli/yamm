@@ -30,7 +30,7 @@ class ChainTest(TestCase):
     def test_step(self):
         chain = Chain({(1,): {1: 1, 2: 1},
                        (2,): {1: 1}})
-        test = chain.step(2)
+        test = chain.step((2,))
         check = 1
         self.assertEqual(test, check)
 
@@ -38,7 +38,7 @@ class ChainTest(TestCase):
         chain = Chain({(1,): {2: 1},
                        (2,): {3: 1},
                        (3,): {1: 1}})
-        test = chain.walk(1)
+        test = chain.walk((1,))
         check = (1, 2, 3)
         for t, c in zip(test, check):
             self.assertEqual(t, c)
@@ -46,7 +46,7 @@ class ChainTest(TestCase):
     def test_walk_until(self):
         chain = Chain({(1,): {1: 1, 2: 1},
                        (2,): {1: 1}})
-        test = len(chain.walk_until(1, 8))
+        test = len(chain.walk_until((1,), 8))
         check = 8
         self.assertEqual(test, check)
 
