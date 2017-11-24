@@ -14,20 +14,16 @@ class Chain(dict):
 
     @property
     def order(self):
-        return len(tuple(self.keys()[0]))
+        return len(tuple(self.keys())[0])
 
     @classmethod
     def from_data(cls, data, order=1):
         raise NotImplementedError
 
-    @classmethod
-    def from_matrix(cls, matrix):
-        raise NotImplementedError
-
     def step(self, state):
         try:
             s = self[state]
-            return random.choices(tuple(s.keys()), tuple(s.values()))[0]
+            return random.choices(tuple(s.keys()), tuple(s.values()), k=1)[0]
         except KeyError:
             return None
 
