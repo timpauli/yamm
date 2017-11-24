@@ -6,29 +6,34 @@ class Chain(dict):
     Representation of a markov chain as a dictionary.
     The keys are state-tuples and the values are dictionaries.
     In these dictionaries the keys are single states and the values are weights
-    to reach this state.
+    to reach this state. None is a marker for an end.
     Example:
     {("hello",): {"hello": 0.5, "markov": 0.5},
-    ("markov",): {"hello": 2, "markov": 3}}
+    ("markov",): {"hello": 2, "markov": 3, None : 4}}
     """
 
     @property
     def order(self):
         return len(tuple(self.keys())[0])
 
+    def raise_weight(self, state, aim, value=1):
+        if state not in self:
+            self[state] = {}
+        if aim not in self[state]:
+            self[state][aim] = 0
+        self[state][aim] += value
+
     @classmethod
     def from_data(cls, data, order=1):
+        chain = cls({})
         nested = (data[i:] for i in range(order + 1))
-        result = {}
         for n in zip(*nested):
             state = n[:-1]
             aim = n[-1]
-            if state not in result:
-                result[state] = {}
-            if aim not in result[state]:
-                result[state][aim] = 0
-            result[state][aim] += 1
-        return cls(result)
+            chain.raise_weight(state, aim)
+        last = tuple(data[-i] for i in range(1, order + 1))
+        chain.raise_weight(last, None)
+        return chain
 
     def step(self, state):
         try:

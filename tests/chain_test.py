@@ -12,16 +12,35 @@ class ChainTest(TestCase):
                        (1,): {2: 1, 1: 1}})
         self.assertEqual(test, check)
 
+    def test_raise1(self):
+        test = Chain({})
+        test.raise_weight((1,), 1)
+        check = Chain({(1,): {1: 1}})
+        self.assertEqual(test, check)
+
+    def test_raise2(self):
+        test = Chain({(1,): {1: 1}})
+        test.raise_weight((1,), 1)
+        check = Chain({(1,): {1: 2}})
+        self.assertEqual(test, check)
+
+    def test_raise3(self):
+        test = Chain({(1,): {1: 1}})
+        test.raise_weight((1,), 2)
+        check = Chain({(1,): {1: 1, 2: 1}})
+        self.assertEqual(test, check)
+
     def test_from_data1(self):
         test = Chain.from_data([1, 2, 1, 1])
-        check = Chain({(1,): {1: 1, 2: 1},
+        check = Chain({(1,): {1: 1, 2: 1, None: 1},
                        (2,): {1: 1}})
         self.assertEqual(test, check)
 
     def test_from_data2(self):
         test = Chain.from_data([1, 2, 1, 1], 2)
         check = Chain({(1, 2): {1: 1},
-                       (2, 1): {1: 1}})
+                       (2, 1): {1: 1},
+                       (1, 1): {None: 1}})
         self.assertEqual(test, check)
 
     def test_step(self):
