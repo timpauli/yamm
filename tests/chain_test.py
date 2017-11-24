@@ -24,9 +24,6 @@ class ChainTest(TestCase):
                        (2, 1): {1: 1}})
         self.assertEqual(test, check)
 
-    def test_from_matrix(self):
-        pass
-
     def test_step(self):
         chain = Chain({(1,): {1: 1, 2: 1},
                        (2,): {1: 1}})
