@@ -50,6 +50,18 @@ class ChainTest(TestCase):
         check = 8
         self.assertEqual(test, check)
 
+    def test_order(self):
+        chain0 = Chain({(1,): {2: 1},
+                        (2,): {1: 1}})
+        chain1 = Chain({(1, 2): {2: 1},
+                        (2, 3): {3: 1},
+                        (3, 1): {1: 1}})
+        chain2 = Chain({(1, 2, 1): {2: 1},
+                        (2, 1, 2): {1: 1}})
+        self.assertEqual(chain0.order, 1)
+        self.assertEqual(chain1.order, 2)
+        self.assertEqual(chain2.order, 3)
+
 
 if __name__ == '__main__':
     main()
