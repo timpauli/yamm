@@ -44,4 +44,4 @@ class Chain(dict):
 
     def walk_until(self, start, max_steps):
         generator = self.walk(start)
-        return tuple(next(generator) for c in range(max_steps))
+        return tuple(next(generator) for i in range(max_steps))
