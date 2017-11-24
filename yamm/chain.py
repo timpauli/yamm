@@ -18,7 +18,17 @@ class Chain(dict):
 
     @classmethod
     def from_data(cls, data, order=1):
-        raise NotImplementedError
+        nested = (data[i:] for i in range(order + 1))
+        result = {}
+        for n in zip(*nested):
+            state = n[:-1]
+            aim = n[-1]
+            if state not in result:
+                result[state] = {}
+            if aim not in result[state]:
+                result[state][aim] = 0
+            result[state][aim] += 1
+        return cls(result)
 
     @classmethod
     def from_matrix(cls, matrix):
