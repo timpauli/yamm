@@ -1,3 +1,6 @@
+import random
+
+
 class Chain(dict):
     """
     Representation of a markov chain as a dictionary.
@@ -17,11 +20,20 @@ class Chain(dict):
     def from_matrix(cls, matrix):
         raise NotImplementedError
 
-    def step(self, start):
-        raise NotImplementedError
+    def step(self, state):
+        try:
+            s = self[state]
+            return tuple(random.choices(tuple(s.keys()), tuple(s.values())))
+        except KeyError:
+            return None
 
     def walk(self, start):
-        raise NotImplementedError
+        def walk_generator(current_state):
+            while current_state:
+                yield current_state
+                current_state = self.step(current_state)
+        return walk_generator(start)
 
     def walk_until(self, start, max_steps):
-        raise NotImplementedError
+        generator = self.walk(start)
+        return tuple(next(generator) for c in range(max_steps))
