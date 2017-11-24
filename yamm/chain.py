@@ -33,9 +33,9 @@ class Chain(dict):
     def step(self, state):
         try:
             s = self[state]
-            return random.choices(tuple(s.keys()), tuple(s.values()), k=1)[0]
         except KeyError:
             return None
+        return random.choices(tuple(s.keys()), tuple(s.values()), k=1)[0]
 
     def walk(self, start):
         def walk_generator(current_state):
