@@ -1,4 +1,5 @@
 import random
+from itertools import islice
 
 
 class Chain(dict):
@@ -16,23 +17,27 @@ class Chain(dict):
     def order(self):
         return len(tuple(self.keys())[0])
 
-    def raise_weight(self, state, aim, value=1):
+    def vary_weight(self, state, aim, value=1):
         if state not in self:
             self[state] = {}
         if aim not in self[state]:
             self[state][aim] = 0
         self[state][aim] += value
+        if self[state][aim] <= 0:
+            self[state].pop(aim)
+            if not self[state]:
+                self.pop(state)
 
     @classmethod
     def from_data(cls, data, order=1):
         chain = cls({})
-        nested = (data[i:] for i in range(order + 1))
+        nested = (islice(data, i, None) for i in range(order + 1))
         for n in zip(*nested):
             state = n[:-1]
             aim = n[-1]
-            chain.raise_weight(state, aim)
+            chain.vary_weight(state, aim)
         last = tuple(data[-i] for i in range(1, order + 1))
-        chain.raise_weight(last, None)
+        chain.vary_weight(last, None)
         return chain
 
     def step(self, state):

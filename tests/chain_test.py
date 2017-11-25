@@ -12,22 +12,28 @@ class ChainTest(TestCase):
                        (1,): {2: 1, 1: 1}})
         self.assertEqual(test, check)
 
-    def test_raise1(self):
+    def test_vary1(self):
         test = Chain({})
-        test.raise_weight((1,), 1)
+        test.vary_weight((1,), 1)
         check = Chain({(1,): {1: 1}})
         self.assertEqual(test, check)
 
-    def test_raise2(self):
+    def test_vary2(self):
         test = Chain({(1,): {1: 1}})
-        test.raise_weight((1,), 1)
+        test.vary_weight((1,), 1)
         check = Chain({(1,): {1: 2}})
         self.assertEqual(test, check)
 
-    def test_raise3(self):
+    def test_vary3(self):
         test = Chain({(1,): {1: 1}})
-        test.raise_weight((1,), 2)
+        test.vary_weight((1,), 2)
         check = Chain({(1,): {1: 1, 2: 1}})
+        self.assertEqual(test, check)
+
+    def test_vary_sub(self):
+        test = Chain({(1,): {1: 1}})
+        test.vary_weight((1,), 1, -1)
+        check = Chain({})
         self.assertEqual(test, check)
 
     def test_from_data1(self):
