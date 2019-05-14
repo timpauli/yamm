@@ -1,5 +1,6 @@
-import random
-from itertools import islice
+import random as rand
+import collections as coll
+import itertools as it
 
 
 class Chain(dict):
@@ -19,7 +20,7 @@ class Chain(dict):
 
     def vary_weight(self, state, aim, value=1):
         if state not in self:
-            self[state] = {}
+            self[state] = coll.Counter()
         if aim not in self[state]:
             self[state][aim] = 0
         self[state][aim] += value
@@ -30,8 +31,8 @@ class Chain(dict):
 
     @classmethod
     def from_data(cls, data, order=1):
-        chain = cls({})
-        nested = (islice(data, i, None) for i in range(order + 1))
+        chain = cls(coll.Counter())
+        nested = (it.islice(data, i, None) for i in range(order + 1))
         for n in zip(*nested):
             state = n[:-1]
             aim = n[-1]
@@ -45,7 +46,7 @@ class Chain(dict):
             s = self[state]
         except KeyError:
             return None
-        return random.choices(tuple(s.keys()), tuple(s.values()), k=1)[0]
+        return rand.choices(tuple(s.keys()), tuple(s.values()), k=1)[0]
 
     def walk(self, start):
         def walk_generator(current_state):
@@ -61,3 +62,16 @@ class Chain(dict):
     def walk_until(self, start, max_steps):
         generator = self.walk(start)
         return tuple(next(generator) for i in range(max_steps))
+
+    def merge(self, chain):
+        result = {}
+        states = {**self, **chain} # merge just keys
+        for s in self:
+            if s in chain:
+                result[s] = coll.Counter(self[s]) + coll.Counter(chain[s])
+            else:
+                result[s] = coll.Counter(self[s])
+        for s in chain:
+            if s not in self:
+                result[s] = coll.Counter(chain[s])
+        return result

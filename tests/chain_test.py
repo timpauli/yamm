@@ -84,6 +84,18 @@ class ChainTest(TestCase):
         self.assertEqual(chain1.order, 2)
         self.assertEqual(chain2.order, 3)
 
+    def test_merge(self):
+        chain0 = Chain({(1,): {2: 1},
+                        (2,): {1: 1}})
+        chain1 = Chain({(1,): {2: 1},
+                        (3,): {1: 1}})
+        test = chain0.merge(chain1)
+        check = Chain({(1,): {2: 2},
+                      (2,): {1: 1},
+                      (3,): {1: 1}})
+        self.assertEqual(test, check)
+
+
 
 if __name__ == '__main__':
     main()
