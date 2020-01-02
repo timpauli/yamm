@@ -31,7 +31,7 @@ class Chain(dict):
 
     @classmethod
     def from_data(cls, data, order=1):
-        chain = cls(coll.Counter())
+        chain = cls()
         nested = (it.islice(data, i, None) for i in range(order + 1))
         for n in zip(*nested):
             state = n[:-1]
@@ -57,6 +57,7 @@ class Chain(dict):
                 yield res
                 current_state = current_state[1:] + (res,)
                 res = self.step(current_state)
+
         return walk_generator(start)
 
     def walk_until(self, start, max_steps):
@@ -64,8 +65,7 @@ class Chain(dict):
         return tuple(next(generator) for i in range(max_steps))
 
     def merge(self, chain):
-        result = {}
-        states = {**self, **chain} # merge just keys
+        result = self.__class__()
         for s in self:
             if s in chain:
                 result[s] = coll.Counter(self[s]) + coll.Counter(chain[s])
@@ -75,3 +75,33 @@ class Chain(dict):
             if s not in self:
                 result[s] = coll.Counter(chain[s])
         return result
+
+    @classmethod
+    def distribute(cls, dic):
+        def distribute_generator():
+            length = sum(dic.values())
+            pairs = []
+            for key in dic:
+                step = length / dic[key]
+                pairs += [(key, step * i) for i in range(dic[key])]
+            pairs_sorted = sorted(pairs, key=lambda x: x[1])
+            for x in pairs_sorted:
+                yield x[0]
+            yield None
+
+        return distribute_generator()
+
+    def walk_deterministic(self, start):
+        def walk_generator(current_state):
+            deterministic_map = {}
+            for key in self:
+                deterministic_map[key] = self.distribute(self[key])
+            for element in current_state:
+                yield element
+            res = next(deterministic_map[current_state])
+            while res is not None:
+                yield res
+                current_state = current_state[1:] + (res,)
+                res = next(deterministic_map[current_state])
+
+        return walk_generator(start)
