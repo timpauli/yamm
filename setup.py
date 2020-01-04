@@ -6,7 +6,7 @@ setup(
     license='GPL',
     description='yet another markov module',
     author='Tim Pauli <tim.pauli@folkwang-uni.de>, Levin Zimmermann <levin-eric.zimmermann@folkwang-uni.de>',
-    url='https://github.com/inkeye/yamm',
+    url='https://github.com/timpauli/yamm',
     packages=['yamm'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
