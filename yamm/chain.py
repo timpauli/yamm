@@ -85,9 +85,8 @@ class Chain(dict):
                 step = length / dic[key]
                 pairs += [(key, step * i) for i in range(dic[key])]
             pairs_sorted = sorted(pairs, key=lambda x: x[1])
-            for x in pairs_sorted:
+            for x in it.cycle(pairs_sorted):
                 yield x[0]
-            yield None
 
         return distribute_generator()
 

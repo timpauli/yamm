@@ -79,14 +79,16 @@ class ChainTest(TestCase):
 
     def test_distribute1(self):
         dic = {1: 3, 2: 3, 3: 3}
-        test = list(Chain.distribute(dic))
-        check = [1, 2, 3, 1, 2, 3, 1, 2, 3, None]
+        gen = Chain.distribute(dic)
+        test = [next(gen) for i in range(9)]
+        check = [1, 2, 3, 1, 2, 3, 1, 2, 3]
         self.assertEqual(test, check)
 
     def test_distribute2(self):
         dic = {1: 9, 2: 6, 3: 3}
-        test = list(Chain.distribute(dic))
-        check = [1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1, None]
+        gen = Chain.distribute(dic)
+        test = [next(gen) for i in range(18)]
+        check = [1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1]
         self.assertEqual(test, check)
 
     def test_walk_deterministic(self):
