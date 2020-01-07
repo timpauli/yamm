@@ -98,9 +98,16 @@ class Chain(dict):
             for element in current_state:
                 yield element
             res = next(deterministic_map[current_state])
-            while res is not None:
+            while True:
                 yield res
-                current_state = current_state[1:] + (res,)
+                if res is None:
+                    current_state = start
+                else:
+                    current_state = current_state[1:] + (res,)
                 res = next(deterministic_map[current_state])
 
         return walk_generator(start)
+
+    def walk_deterministic_until(self, start, max_steps):
+        generator = self.walk_deterministic(start)
+        return tuple(next(generator) for i in range(max_steps))

@@ -93,7 +93,7 @@ class ChainTest(TestCase):
 
     def test_walk_deterministic(self):
         chain = Chain({(1,): {2: 1}, (2,): {3: 1}, (3,): {None: 1}})
-        test = list(chain.walk_deterministic((1,)))
+        test = list(chain.walk_deterministic_until((1,), 3))
         check = (1, 2, 3)
         for t, c in zip(test, check):
             self.assertEqual(t, c)
