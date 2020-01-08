@@ -88,7 +88,7 @@ class ChainTest(TestCase):
         dic = {1: 9, 2: 6, 3: 3}
         gen = Chain.distribute(dic)
         test = [next(gen) for i in range(18)]
-        check = [1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1, 1, 2, 3, 1, 2, 1]
+        check = [1, 2, 1, 3, 2, 1, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 2, 1]
         self.assertEqual(test, check)
 
     def test_walk_deterministic(self):

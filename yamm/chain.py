@@ -79,11 +79,10 @@ class Chain(dict):
     @classmethod
     def distribute(cls, dic):
         def distribute_generator():
-            length = sum(dic.values())
             pairs = []
             for key in dic:
-                step = length / dic[key]
-                pairs += [(key, step * i) for i in range(dic[key])]
+                step = 1.0 / (dic[key] + 1)
+                pairs += [(key, step * i) for i in range(1, dic[key] + 1)]
             pairs_sorted = sorted(pairs, key=lambda x: x[1])
             for x in it.cycle(pairs_sorted):
                 yield x[0]
