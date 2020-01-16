@@ -1,6 +1,6 @@
-import random as rand
 import collections as coll
 import itertools as it
+import random as rand
 
 
 class Chain(dict):
@@ -14,10 +14,12 @@ class Chain(dict):
     ("markov",): {"hello": 2, "markov": 3, None : 4}}
     """
 
+    # properties
     @property
     def order(self):
         return len(tuple(self.keys())[0])
 
+    # input data
     def vary_weight(self, state, aim, value=1):
         if state not in self:
             self[state] = coll.Counter()
@@ -41,6 +43,19 @@ class Chain(dict):
         chain.vary_weight(last, None)
         return chain
 
+    def merge(self, chain):
+        result = self.__class__()
+        for s in self:
+            if s in chain:
+                result[s] = coll.Counter(self[s]) + coll.Counter(chain[s])
+            else:
+                result[s] = coll.Counter(self[s])
+        for s in chain:
+            if s not in self:
+                result[s] = coll.Counter(chain[s])
+        return result
+
+    # normal random markov output
     def step(self, state):
         try:
             s = self[state]
@@ -64,22 +79,12 @@ class Chain(dict):
         generator = self.walk(start)
         return tuple(next(generator) for i in range(max_steps))
 
-    def merge(self, chain):
-        result = self.__class__()
-        for s in self:
-            if s in chain:
-                result[s] = coll.Counter(self[s]) + coll.Counter(chain[s])
-            else:
-                result[s] = coll.Counter(self[s])
-        for s in chain:
-            if s not in self:
-                result[s] = coll.Counter(chain[s])
-        return result
-
+    # deterministic output
     @classmethod
     def distribute(cls, dic):
         def distribute_generator():
             pairs = []
+            # make weights which are evenly spaced
             for key in dic:
                 step = 1.0 / (dic[key] + 1)
                 pairs += [(key, step * i) for i in range(1, dic[key] + 1)]
@@ -89,21 +94,30 @@ class Chain(dict):
 
         return distribute_generator()
 
+    def make_deterministic_map(self):
+        self.__deterministic_map = {}
+        for key in self:
+            self.__deterministic_map[key] = self.distribute(self[key])
+
+    def deterministic_step(self, state):
+        try:
+            s = self.__deterministic_map[state]
+        except KeyError:
+            return None
+        return next(s)
+
     def walk_deterministic(self, start):
         def walk_generator(current_state):
-            deterministic_map = {}
-            for key in self:
-                deterministic_map[key] = self.distribute(self[key])
             for element in current_state:
                 yield element
-            res = next(deterministic_map[current_state])
+            res = self.deterministic_step(current_state)
             while True:
                 yield res
                 if res is None:
                     current_state = start
                 else:
                     current_state = current_state[1:] + (res,)
-                res = next(deterministic_map[current_state])
+                res = self.deterministic_step(current_state)
 
         return walk_generator(start)
 
