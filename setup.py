@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="yamm",
-    version="0.0.5",
+    version="0.1",
     license="GPL",
     description="yet another markov module",
     author="Tim Pauli <tim.pauli@folkwang-uni.de>, Levin Zimmermann <levin-eric.zimmermann@folkwang-uni.de>",
